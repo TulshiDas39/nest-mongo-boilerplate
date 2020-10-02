@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Delete, Put, Body, Param} from '@nestjs/common';
-import { ApiUseTags, ApiResponse } from '@nestjs/swagger';
+import { ApiResponse } from '@nestjs/swagger';
 import { IBaseService } from './IBase.service'
 import { BaseEntity } from './base.entity';
 

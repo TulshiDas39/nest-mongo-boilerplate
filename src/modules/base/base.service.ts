@@ -1,11 +1,11 @@
-import { Component, Inject, BadGatewayException } from '@nestjs/common';
+import { Inject, BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { STATUS_CODES } from 'http';
 import { IBaseService } from '../base/IBase.service';
 import { BaseEntity } from './base.entity';
 
-@Component()
+@Injectable()
 export class BaseService<T extends BaseEntity> implements IBaseService<T>{
 	constructor(
     private readonly genericRepository: Repository<T>) {}
@@ -37,12 +37,12 @@ export class BaseService<T extends BaseEntity> implements IBaseService<T>{
 	} catch (error) {
 		throw new BadGatewayException(error);
 	}
-  	return <Promise<T>>this.genericRepository.findOneById(id);
+  	return <Promise<T>>this.genericRepository.findOne(id);
   }
 
   delete(id: number) {
 	try {
-		this.genericRepository.deleteById(id)
+		this.genericRepository.delete(id)
 	} catch (error) {
 		throw new BadGatewayException(error);
 	}
@@ -51,7 +51,7 @@ export class BaseService<T extends BaseEntity> implements IBaseService<T>{
   update(entity: any): Promise<any>{
 	try {
 		return new Promise<any> ((resolve, reject) => {
-			this.genericRepository.findOneById(entity.id)
+			this.genericRepository.findOne(entity.id)
 			.then(responseGet => {
 				try {
 					if (responseGet == null) reject('Not existing')
