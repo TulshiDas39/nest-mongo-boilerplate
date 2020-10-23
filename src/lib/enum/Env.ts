@@ -1,3 +1,4 @@
 export enum Env{
-    PORT="PORT"
+    DEVELOPMENT="develpment",
+    PRODUCTION="production"
 }

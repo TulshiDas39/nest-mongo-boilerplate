@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
-import { ServerConfig } from 'src/lib';
+import { ServerCommonConfig } from 'src/lib';
+import { ServerConfig } from 'src/lib/config/ServerConfig';
 
 export const databaseProviders = [
   {
