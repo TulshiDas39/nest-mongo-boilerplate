@@ -1,31 +1,29 @@
-import { Inject, BadGatewayException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { STATUS_CODES } from 'http';
-import { IBaseService } from '../base/IBase.service';
-import { BaseEntity } from './base.entity';
+import { BadGatewayException, Injectable } from '@nestjs/common';
+import { IBaseService } from './typing/interface/IBase.service';
+import { Base } from '.';
+import { BaseRepository } from './base.repository';
+import { CreateQuery, Document } from 'mongoose';
 
 @Injectable()
-export class BaseService<T extends BaseEntity> implements IBaseService<T>{
+export class BaseService<T extends Base> implements IBaseService<T>{
 	constructor(
-    private readonly genericRepository: Repository<T>) {}
-
-  create(entity: any): Promise<number>{
-	  try {
-		return new Promise<number> ((resolve, reject) => {
-			this.genericRepository.save(entity)
-			.then(created=> resolve(created.id))
-			.catch(err => reject(err))
+	private readonly genericRepository: BaseRepository<T>) {}
+	
+	create(data: CreateQuery<T>): Promise<T & Document> {
+		try {
+			return new Promise<T & Document>((resolve, reject) => {
+				this.genericRepository.create(data)
+					.then(create => resolve(create))
+					.catch(err => reject(err))
 			})
-		}
-		catch(error) {
+	} catch (error) {
 			throw new BadGatewayException(error);
 		}
-  }
+	}
 
   getAll(): Promise<T[]> {
 	  try {
-		return <Promise<T[]>>this.genericRepository.find();
+		return <Promise<T[]>>this.genericRepository.getAll();
 	  } catch (error) {
 		throw new BadGatewayException(error);
 	}
@@ -37,7 +35,7 @@ export class BaseService<T extends BaseEntity> implements IBaseService<T>{
 	} catch (error) {
 		throw new BadGatewayException(error);
 	}
-  	return <Promise<T>>this.genericRepository.findOne(id);
+  	return <Promise<T>>this.genericRepository.get(id);
   }
 
   delete(id: number) {
@@ -48,15 +46,14 @@ export class BaseService<T extends BaseEntity> implements IBaseService<T>{
 	}
   }
 
-  update(entity: any): Promise<any>{
+  update(data: T & Document): Promise<T>{
 	try {
 		return new Promise<any> ((resolve, reject) => {
-			this.genericRepository.findOne(entity.id)
+			this.genericRepository.get(data.id)
 			.then(responseGet => {
 				try {
 					if (responseGet == null) reject('Not existing')
-					let retrievedEntity: any = responseGet as any
-					this.genericRepository.save(retrievedEntity)
+					this.genericRepository.update(data)
 					.then(response => resolve(response))
 					.catch(err => reject(err))
 				}
