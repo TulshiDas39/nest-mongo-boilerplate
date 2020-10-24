@@ -1,8 +1,13 @@
 import { IsNotEmpty } from "class-validator";
 
 export class SingupDto{
+    @IsNotEmpty()
     firstName: string;
-    lastName: number;
+    
+    @IsNotEmpty()
+    lastName: string;
+
+    @IsNotEmpty()
     phone: string;
     
     @IsNotEmpty()

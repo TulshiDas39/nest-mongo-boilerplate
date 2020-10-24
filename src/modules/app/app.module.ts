@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ServerConfig } from 'src/lib/config/ServerConfig';
 import { AuthModule } from '../auth/auth.module';
 import { CatsModule } from '../cats/cats.module';
-import { DatabaseModule } from '../database/database.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { UserModule } from '../user/user.module';
+
 
 @Module({
-  imports: [CatsModule,AuthModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+  CatsModule,MongooseModule.forRoot(ServerConfig.DBConnectionUrl),
+  AuthModule,UserModule
+],
 })
 export class AppModule {}
