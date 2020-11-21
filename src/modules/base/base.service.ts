@@ -8,6 +8,13 @@ import { CreateQuery, Document } from 'mongoose';
 export class BaseService<T extends Base> implements IBaseService<T>{
 	constructor(
 	private readonly genericRepository: BaseRepository<T>) {}
+
+	find(query: any) {
+		return this.genericRepository.find(query);
+	}
+	findOne(query: any){
+		return this.genericRepository.findOne(query);
+	}
 	
 	create(data: CreateQuery<T>): Promise<T & Document> {
 		try {
@@ -29,16 +36,11 @@ export class BaseService<T extends Base> implements IBaseService<T>{
 	}
   }
 
-  get(id: number): Promise<T> {
-	try {
-		  
-	} catch (error) {
-		throw new BadGatewayException(error);
-	}
-  	return <Promise<T>>this.genericRepository.get(id);
+  get(id: string) {
+  	return this.genericRepository.get(id);
   }
 
-  delete(id: number) {
+  delete(id: string) {
 	try {
 		this.genericRepository.delete(id)
 	} catch (error) {

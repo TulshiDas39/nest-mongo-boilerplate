@@ -1,8 +1,9 @@
 import {  Get, Post, Delete, Put, Body, Param} from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { IBaseService } from './typing/interface/IBase.service'
-import { Base, IBaseController, TDocument } from './typing';
+import { Base, IBaseController } from './typing';
 import { CreateQuery } from 'mongoose';
+import { TDocument } from 'src/lib';
 
 export class BaseController<T extends Base> implements IBaseController<T>{
 
@@ -17,7 +18,7 @@ export class BaseController<T extends Base> implements IBaseController<T>{
 	@Get(':id')
 	@ApiResponse({ status: 200, description: 'Entity retrieved successfully.'})
 	@ApiResponse({ status: 404, description: 'Entity does not exist'})
-	async get(@Param('id') id: number): Promise<T> {
+	async get(@Param('id') id: any){
 	  return this.baseService.get(id)
 	}
 
