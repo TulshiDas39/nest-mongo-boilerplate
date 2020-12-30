@@ -1,11 +1,14 @@
-import { CreateQuery, Document } from "mongoose";
+import { Document } from "mongoose";
+import { TData } from "../../../../lib";
+import { Base } from "../base.schema";
+
+
+export type TOmitBase<T> = Omit<T,keyof Base>;
 
 export interface IBaseCRUD<T>{
     getAll(): Promise<T[]>;
-    get(id: number): Promise<T>;
+    get(id: string): Promise<TData<T>>;
     update(entity: T): Promise<T>;
-    create(entity: CreateQuery<T>): Promise<T & Document>;
-    delete(id: number);
+    create(entity: TOmitBase<T>): Promise<T & Document>;
+    delete(id: any);
 }
-
-export type TDocument<T> = T & Document;

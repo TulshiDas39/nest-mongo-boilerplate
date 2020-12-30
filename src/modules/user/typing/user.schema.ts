@@ -1,19 +1,21 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
-import { Base } from "src/modules/base/typing";
+import { EnumUserType } from "src/lib/enum/enum";
+import { Base } from "src/modules/base";
 
-export type UserDocument = User & Document;
 
 @Schema()
-export class User{
+export class User extends Base{
   @Prop()
-  firstName: string;
-
-  @Prop()
-  lastName:string;
+  name: string;
 
   @Prop()
   phone: string;
+
+  @Prop()
+  email: string;
+
+  @Prop()
+  type:EnumUserType;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

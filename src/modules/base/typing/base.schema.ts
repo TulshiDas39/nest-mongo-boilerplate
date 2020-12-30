@@ -1,9 +1,10 @@
-import { Schema } from "@nestjs/mongoose";
-
-export type BaseDocument = Base & Document;
-
+import { Prop, Schema } from "@nestjs/mongoose";
 @Schema()
 export class Base {
-  
-}
+  @Prop()  
+  createdAt:string;
 
+  @Prop()  
+  updatedAt:string;
+
+}

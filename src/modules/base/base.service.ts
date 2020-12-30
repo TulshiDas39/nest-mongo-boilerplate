@@ -1,18 +1,24 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { IBaseService } from './typing/interface/IBase.service';
-import { Base } from '.';
+import { Base, TOmitBase } from '.';
 import { BaseRepository } from './base.repository';
-import { CreateQuery, Document } from 'mongoose';
+import { Document } from 'mongoose';
+import { BaseUtil } from './utils';
+import { TData } from 'src/lib';
 
 @Injectable()
 export class BaseService<T extends Base> implements IBaseService<T>{
 	constructor(
 	private readonly genericRepository: BaseRepository<T>) {}
 	
-	create(data: CreateQuery<T>): Promise<T & Document> {
+	create(data: TOmitBase<T>): Promise<TData<T>> {
+		const dataToInsert:T ={
+			...data,
+			...BaseUtil.getBaseSchemaProperty() as any,
+		}
 		try {
 			return new Promise<T & Document>((resolve, reject) => {
-				this.genericRepository.create(data)
+				this.genericRepository.create({...dataToInsert as any,...BaseUtil.getBaseSchemaProperty()})
 					.then(create => resolve(create))
 					.catch(err => reject(err))
 			})
@@ -29,16 +35,11 @@ export class BaseService<T extends Base> implements IBaseService<T>{
 	}
   }
 
-  get(id: number): Promise<T> {
-	try {
-		  
-	} catch (error) {
-		throw new BadGatewayException(error);
-	}
-  	return <Promise<T>>this.genericRepository.get(id);
+  get(id: string) {
+  	return this.genericRepository.getById(id);
   }
 
-  delete(id: number) {
+  delete(id: string) {
 	try {
 		this.genericRepository.delete(id)
 	} catch (error) {
@@ -49,7 +50,7 @@ export class BaseService<T extends Base> implements IBaseService<T>{
   update(data: T & Document): Promise<T>{
 	try {
 		return new Promise<any> ((resolve, reject) => {
-			this.genericRepository.get(data.id)
+			this.genericRepository.getById(data.id)
 			.then(responseGet => {
 				try {
 					if (responseGet == null) reject('Not existing')
